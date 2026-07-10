@@ -17,5 +17,9 @@
     "prettier": "^3.9.5",
     "typescript": "^7.0.2",
     "nx": "23.0.1"
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
