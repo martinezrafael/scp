@@ -7,3 +7,5 @@ node_modules
 .nx/migrate-runs
 
 packages/db/generated/
+
+docs/
