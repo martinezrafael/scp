@@ -40,7 +40,11 @@ export class User extends AggregateRoot<UserProps> {
   */
 
   // Ponto único de entrada para cadastrar um usuário
-  static register(params: { id: string; email: string; name?: string }) {
+  static register(params: {
+    id: string;
+    email: string;
+    name?: string | undefined;
+  }) {
     /*
       O que faz: Cria a instância real do usuário na memória, preenchendo suas propriedades.
 
