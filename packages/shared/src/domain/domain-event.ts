@@ -39,7 +39,7 @@ export interface DomainEvent {
     Para que serve: Vital para logs, auditorias e para sistemas de Event Sourcing (onde o estado do sistema é reconstruído reexecutando os eventos na ordem cronológica correta).
   */
 
-  ocurredAt: Date; // Quando aconteceu
+  occurredAt: Date; // Quando aconteceu
 
   /*
     O código: aggregateId é uma string.
