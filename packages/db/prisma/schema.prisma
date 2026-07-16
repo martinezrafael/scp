@@ -8,10 +8,12 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
+  id    String  @id @default(uuid())
   email String  @unique
   name  String?
   posts Post[]
+
+  memberships Membership[] // Relação adicionada para conectar com o ecossistema SaaS
 }
 
 model Post {
@@ -20,5 +22,99 @@ model Post {
   content   String?
   published Boolean @default(false)
   author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+  authorId  String
+}
+
+// ==========================================
+// MÓDULO: CORE SAAS (TENANCY & RBAC)
+// ==========================================
+
+model Tenant {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  status      String   @default("active")
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  memberships Membership[]
+  workspaces  Workspace[]
+}
+
+model Workspace {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+model Membership {
+  id        String   @id @default(uuid())
+  tenantId  String
+  userId    String
+  role      String
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([tenantId, userId])
+}
+
+// ==========================================
+// MÓDULO: BILLING & ENTITLEMENTS
+// ==========================================
+
+model Subscription {
+  id                     String   @id @default(uuid())
+  tenantId               String
+  planId                 String
+  status                 String
+  provider               String?
+  providerSubscriptionId String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model Entitlement {
+  id        String    @id @default(uuid())
+  tenantId  String
+  feature   String
+  limit     Int?
+  usage     Int       @default(0)
+  resetAt   DateTime?
+  createdAt DateTime  @default(now())
+
+  @@unique([tenantId, feature])
+}
+
+// ==========================================
+// MÓDULO: AUDIT & EVENTS
+// ==========================================
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  tenantId     String
+  actorId      String
+  action       String
+  resourceType String
+  resourceId   String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  eventName   String
+  aggregateId String
+  payload     Json
+  status      String    @default("pending")
+  attempts    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
 }
