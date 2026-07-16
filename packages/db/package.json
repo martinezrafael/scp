@@ -2,7 +2,11 @@
   "name": "@scp/db",
   "version": "1.0.0",
   "scripts": {
-    "migrate:dev": "prisma migrate dev --schema=prisma/schema.prisma"
+    "migrate:dev": "prisma migrate dev --schema=prisma/schema.prisma",
+    "db:seed": "prisma db seed --schema=prisma/schema.prisma"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "type": "module",
   "main": "./src/index.ts",
