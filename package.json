@@ -6,7 +6,8 @@
   "scripts": {
     "build": "nx run-many -t build",
     "lint:check": "prettier --check .",
-    "lint:fix": "prettier --write ."
+    "lint:fix": "prettier --write .",
+    "db:migrate": "nx run @scp/db:migrate:dev"
   },
   "keywords": [],
   "author": "Rafael Molina Martinez",

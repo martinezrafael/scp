@@ -1,6 +1,9 @@
 {
   "name": "@scp/db",
   "version": "1.0.0",
+  "scripts": {
+    "migrate:dev": "prisma migrate dev --schema=prisma/schema.prisma"
+  },
   "type": "module",
   "main": "./src/index.ts",
   "dependencies": {
