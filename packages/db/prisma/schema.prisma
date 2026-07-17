@@ -12,6 +12,7 @@ model User {
   email String  @unique
   name  String?
   posts Post[]
+  emailVerified Boolean  @default(false)
 
   memberships Membership[] // Relação adicionada para conectar com o ecossistema SaaS
 }

@@ -95,6 +95,26 @@ export class User extends AggregateRoot<UserProps> {
   }
 
   /*
+    O que faz: Cria um método estático de reconstituição chamado restore. Ele recebe os dados primitivos vindos diretamente do banco de dados.
+
+    O raciocínio: Hidratação de Infraestrutura. Quando o banco de dados retorna um usuário, ele já existe historicamente. Portanto, não podemos 
+    chamar o `register()`, pois ele resetaria o `emailVerified` para `false` e dispararia um evento de novo cadastro por engano. O método `restore` 
+    reconstrói o estado exato passado criando o objeto na memória sem disparar nenhum efeito colateral.
+  */
+  static restore(params: {
+    id: string;
+    email: string;
+    name?: string | undefined;
+    emailVerified: boolean;
+  }) {
+    return new User(params.id, {
+      email: Email.create(params.email), 
+      name: params.name,
+      emailVerified: params.emailVerified, 
+    });
+  }
+
+  /*
     O que faz: Cria um método de leitura (getter) para expor o e-mail do usuário.
 
     O raciocínio: Como as propriedades estão protegidas dentro do agregado, se alguém de fora precisar ler o e-mail (por exemplo, 
@@ -105,5 +125,25 @@ export class User extends AggregateRoot<UserProps> {
   // Getter controlado para expor apenas o texto do e-mail, protegendo o objeto interno
   get email() {
     return this.props.email.value;
+  }
+
+  /*
+    O que faz: Cria um método de leitura (getter) para expor o nome do usuário.
+
+    O raciocínio: Permite que componentes de infraestrutura (como o Prisma Repository) acessem o valor do nome de forma segura 
+    para persistir no banco de dados na hora de rodar o comando de salvamento (upsert).
+  */
+  get name() {
+    return this.props.name;
+  }
+
+  /*
+    O que faz: Cria um método de leitura (getter) para expor o status de verificação do e-mail.
+
+    O raciocínio: Permite que a camada de persistência saiba se o e-mail está verificado ou não no estado atual da memória do agregado, 
+    sincronizando fielmente esse booleano no banco de dados.
+  */
+  get emailVerified() {
+    return this.props.emailVerified;
   }
 }
