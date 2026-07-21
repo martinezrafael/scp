@@ -119,3 +119,12 @@ model OutboxEvent {
   createdAt   DateTime  @default(now())
   processedAt DateTime?
 }
+
+model IdempotencyKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  tenantId  String?
+  response  Json?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
